@@ -18,6 +18,25 @@ This is a Spring Boot-based REST API for a grocery booking system. It supports t
 - MySQL
 - Postman (for testing APIs)
 
+## Docker setup
+- I have containerized the application using Docker, following the Dockerfile method. Below are the steps to pull and run the Docker image.
+- **Database Configuration:**
+- Since the application connects to a local MySQL database, I used host.docker.internal to allow the Docker container to communicate with the database running on the host machine.
+- **Docker Image on Docker Hub:**
+- The Docker image has been successfully pushed to Docker Hub.
+- **Steps to Use the Docker Image:**
+- 1. Pull the Docker image from Docker Hub:
+```sh 
+docker pull prajyotpatil/qp-assessment.jar
+```
+- 2. Run the Docker container:
+```sh 
+docker run -p 9090:8099 -e SPRING_PROFILES_ACTIVE=docker prajyotpatil/qp-assessment.jar
+```
+- The application uses multiple profiles (application.properties, application-docker.properties).
+- The Docker profile (docker) is required to configure MySQL using host.docker.internal.
+- Setting "SPRING_PROFILES_ACTIVE=docker" ensures that the correct database configuration is used inside the container.
+
 ## DB setup
 To set up the database for this project, follow these steps:
 - **Schemas of All Tables Used in the Project:**
