@@ -145,7 +145,7 @@ curl --location 'localhost:8099/gba/user/createUser' \
 ``` 
 
 # ADMIN APIs
-- 2. Add new or update exisiting grocery item in the system (inventory)
+1. Add new or update exisiting grocery item in the system (inventory)
 - Endpoint: http://localhost:8099/gba/admin/addOrUpdateGroceryItem
 - Description : This API allows adding or updating a grocery item in the system.
 - If updateFlag is true, it updates the item based on the provided id.
@@ -226,7 +226,7 @@ curl --location 'localhost:8099/gba/admin/addOrUpdateGroceryItem' \
 }'
 ```
 
-3. Fetch All Groceries from the System (Admin Only)
+2. Fetch All Groceries from the System (Admin Only)
 - Endpoint : http://localhost:8099/gba/admin/fetchGroceries
 - Description :
 - This API allows the admin to fetch existing grocery items.
@@ -328,7 +328,7 @@ curl --location 'localhost:8099/gba/admin/fetchGroceries' \
 }'
 ```
 
-4. Remove Grocery Item from the System (Admin Only)
+3. Remove Grocery Item from the System (Admin Only)
 - Endpoint : http://localhost:8099/gba/admin/removeGroceryFromSystem
 - description : This API soft deletes a grocery item by updating its status to "NotAvailable" instead of permanently deleting it.
 - This ensures data consistency and allows for future recovery if needed.
