@@ -118,9 +118,9 @@ Example Request & Response (from Postman):
 - Request Body : 
 ```json
 {
-  "name" : "Prajyot Patil",
+  "name" : "Adam John",
   "mobileNumber" : "8090778891",
-  "emailId" : "prajyot@gmail.com"
+  "emailId" : "adam@gmail.com"
 }
 ```
 Response: 
@@ -144,8 +144,8 @@ curl --location 'localhost:8099/gba/user/createUser' \
 }'
 ``` 
 
-// ADMIN APIs
-2. Add new or update exisiting grocery item in the system (inventory)
+# ADMIN APIs
+- 2. Add new or update exisiting grocery item in the system (inventory)
 - Endpoint: http://localhost:8099/gba/admin/addOrUpdateGroceryItem
 - Description : This API allows adding or updating a grocery item in the system.
 - If updateFlag is true, it updates the item based on the provided id.
@@ -359,7 +359,7 @@ curl --location 'localhost:8099/gba/admin/removeGroceryFromSystem' \
 }'
 ```
 
-// USER APIs
+# USER APIs
 1. Fetch All Available Groceries from Inventory (For User)
 - Endpoint : http://localhost:8099/gba/user/fetchAvailableGroceries
 - description : API to fetch available groceries for users.
