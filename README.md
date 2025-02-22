@@ -13,145 +13,168 @@ This is a Spring Boot-based REST API for a grocery booking system. It supports t
 
 ## Installation & Setup
 - **Prerequisites:**
-Java 17+
-Maven
-MySQL
-Postman (for testing APIs)
+- Java 17+
+- Maven
+- MySQL
+- Postman (for testing APIs)
 
 ## DB setup
 To set up the database for this project, follow these steps:
 - **Schemas of All Tables Used in the Project:**
-This project uses the following tables:
-Note: Indexing has been implemented to optimize API performance.
+- This project uses the following tables:
+- Note: Indexing has been implemented to optimize API performance.
 
 1. td_grocery_items
-this table stores grocery products and acts as an inventory table. It contains details such as item name, price, available stock, and status.
+- This table stores grocery products and acts as an inventory table. It contains details such as item name, price, available stock, and status.
 
 DDL to create the table :
+```sql
 CREATE TABLE `td_grocery_items` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `price` decimal(10,2) NOT NULL,
-  `available_quantity` int DEFAULT NULL,
-  `status` varchar(45) DEFAULT NULL,
-  `creation_date` timestamp NULL DEFAULT NULL,
-  `modification_date` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_grocery_name_status` (`name`,`status`),
-  KEY `idx_grocery_status_name` (`status`,`name`)
+`id` int NOT NULL AUTO_INCREMENT,
+`name` varchar(100) NOT NULL,
+`price` decimal(10,2) NOT NULL,
+`available_quantity` int DEFAULT NULL,
+`status` varchar(45) DEFAULT NULL,
+`creation_date` timestamp NULL DEFAULT NULL,
+`modification_date` timestamp NULL DEFAULT NULL,
+PRIMARY KEY (`id`),
+KEY `idx_grocery_name_status` (`name`,`status`),
+KEY `idx_grocery_status_name` (`status`,`name`)
 )
+```
 
 2. td_order_map
-The td_order_map table stores order details for users.
-Each order is linked to a user_id and can contain multiple grocery items.
+- The td_order_map table stores order details for users.
+- Each order is linked to a user_id and can contain multiple grocery items.
 
 DDL to create the table:
+```sql
 CREATE TABLE `td_order_map` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int DEFAULT NULL,
-  `total_price` decimal(10,2) DEFAULT NULL,
-  `status` varchar(45) DEFAULT NULL,
-  `creation_date` timestamp NULL DEFAULT NULL,
-  `modification_date` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `userId_fk_idx` (`user_id`),
-  CONSTRAINT `userId_fk` FOREIGN KEY (`user_id`) REFERENCES `td_user_table` (`id`)
+ `id` int NOT NULL AUTO_INCREMENT,
+ `user_id` int DEFAULT NULL,
+ `total_price` decimal(10,2) DEFAULT NULL,
+ `status` varchar(45) DEFAULT NULL,
+ `creation_date` timestamp NULL DEFAULT NULL,
+ `modification_date` timestamp NULL DEFAULT NULL,
+ PRIMARY KEY (`id`),
+ KEY `userId_fk_idx` (`user_id`),
+ CONSTRAINT `userId_fk` FOREIGN KEY (`user_id`) REFERENCES `td_user_table` (`id`)
 )
+```
 
 3. td_order_details_map
-The td_order_details_map table stores which grocery items belong to an order.
-Since an order can contain multiple grocery items, this table acts as a join table between td_order_map and td_grocery_items.
+- The td_order_details_map table stores which grocery items belong to an order.
+- Since an order can contain multiple grocery items, this table acts as a join table between td_order_map and td_grocery_items.
 
 DDL to create the table:
+```sql
 CREATE TABLE `td_order_details_map` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `order_id` int DEFAULT NULL,
-  `grocery_item_id` int DEFAULT NULL,
-  `quantity` int DEFAULT NULL,
-  `price` decimal(10,2) DEFAULT NULL,
-  `creation_date` timestamp NULL DEFAULT NULL,
-  `modification_date` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `orderId_fk_idx` (`order_id`),
-  KEY `grocery_itemId_fk_idx` (`grocery_item_id`),
-  CONSTRAINT `grocery_itemId_fk` FOREIGN KEY (`grocery_item_id`) REFERENCES `td_grocery_items` (`id`),
-  CONSTRAINT `orderId_fk` FOREIGN KEY (`order_id`) REFERENCES `td_order_map` (`id`)
+ `id` int NOT NULL AUTO_INCREMENT,
+ `order_id` int DEFAULT NULL,
+ `grocery_item_id` int DEFAULT NULL,
+ `quantity` int DEFAULT NULL,
+ `price` decimal(10,2) DEFAULT NULL,
+ `creation_date` timestamp NULL DEFAULT NULL,
+ `modification_date` timestamp NULL DEFAULT NULL,
+ PRIMARY KEY (`id`),
+ KEY `orderId_fk_idx` (`order_id`),
+ KEY `grocery_itemId_fk_idx` (`grocery_item_id`),
+ CONSTRAINT `grocery_itemId_fk` FOREIGN KEY (`grocery_item_id`) REFERENCES `td_grocery_items` (`id`),
+ CONSTRAINT `orderId_fk` FOREIGN KEY (`order_id`) REFERENCES `td_order_map` (`id`)
 )
+```
 
 4. td_user_table
-The td_user_table stores user details.
-This table is optional and added to map users to orders.
+- The td_user_table stores user details.
+- This table is optional and added to map users to orders.
 
 DDL to create the table:
+```sql
 CREATE TABLE `td_user_table` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `mobile_number` varchar(10) NOT NULL,
-  `email_id` varchar(100) DEFAULT NULL,
-  `role` varchar(45) DEFAULT 'User',
-  `status` varchar(45) DEFAULT NULL,
-  `creation_date` timestamp NULL DEFAULT NULL,
-  `modification_date` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `mobile_number_UNIQUE` (`mobile_number`)
+ `id` int NOT NULL AUTO_INCREMENT,
+ `name` varchar(100) NOT NULL,
+ `mobile_number` varchar(10) NOT NULL,
+ `email_id` varchar(100) DEFAULT NULL,
+ `role` varchar(45) DEFAULT 'User',
+ `status` varchar(45) DEFAULT NULL,
+ `creation_date` timestamp NULL DEFAULT NULL,
+ `modification_date` timestamp NULL DEFAULT NULL,
+ PRIMARY KEY (`id`),
+ UNIQUE KEY `mobile_number_UNIQUE` (`mobile_number`)
 )
+```
 
 ## API Documentation
 - **I have also implemented Swagger for API documentation in this project.**
-After setting up and running this project on your local machine, you can access the Swagger documentation using the following URL:
-"http://localhost:PORT/gba/swagger-ui/index.html#/"
+- After setting up and running this project on your local machine, you can access the Swagger documentation using the following URL:
+- "http://localhost:PORT/gba/swagger-ui/index.html#/"
 
 # APIs in this Project with Request and Response Examples:
 1. Create User API
-Endpoint: http://localhost:PORT/gba/user/createUser
-Description: Temporary API to create a user (not required in the assessment but added to populate master data in the system).
+- Endpoint: http://localhost:PORT/gba/user/createUser
+- Description: Temporary API to create a user (not required in the assessment but added to populate master data in the system).
 
 Example Request & Response (from Postman):
-Request Body : {
-    "name" : "Prajyot Patil",
-    "mobileNumber" : "8090778891",
-    "emailId" : "prajyot@gmail.com"
+- Request Body : 
+```json
+{
+  "name" : "Prajyot Patil",
+  "mobileNumber" : "8090778891",
+  "emailId" : "prajyot@gmail.com"
 }
-Response: {
-    "status": "Success",
-    "statusCode": 200,
-    "statusMsg": "User created successfully!"
+```
+Response: 
+```json
+{
+  "status": "Success",
+  "statusCode": 200,
+  "statusMsg": "User created successfully!"
 }
+```
 
 **CuRL for createUser:** 
+```sh
 curl --location 'localhost:8099/gba/user/createUser' \
 --header 'Content-Type: application/json' \
 --header 'Cookie: JSESSIONID=571A4D10B790C68A9631FA3876C488BE' \
 --data-raw '{
-    "name" : "Adam John",
-    "mobileNumber" : "8198761890",
-    "emailId" : "adam@gmail.com"
+    - "name" : "Adam John",
+    - "mobileNumber" : "8198761890",
+    - "emailId" : "adam@gmail.com"
 }'
+``` 
 
 // ADMIN APIs
 2. Add new or update exisiting grocery item in the system (inventory)
-Endpoint: http://localhost:8099/gba/admin/addOrUpdateGroceryItem
-Description : This API allows adding or updating a grocery item in the system.
+- Endpoint: http://localhost:8099/gba/admin/addOrUpdateGroceryItem
+- Description : This API allows adding or updating a grocery item in the system.
 - If updateFlag is true, it updates the item based on the provided id.
 - If updateFlag is false, it adds a new grocery item.
 - The API also manages inventory (stock levels) by allowing the admin to update the quantity of a grocery item.
 
 Example Request & Response (from Postman):
 - i. Create a New Grocery Item
-Request Body : {
+- Request Body : 
+```json
+{
     "name" : "Sugar",
     "price" : 59,
     "availableQuantity" : "30",
     "updateFlag" : "false"
 }
-Response : {
+```
+Response : 
+```json
+{
     "status": "success",
     "statusCode": 200,
     "statusMsg": "New grocery item added successfully!"
 }
+```
 
 - ii. Update an Existing Grocery Item
-Request Body :
+- Request Body :
+```json
 {
     "id" : 1,
     "name" : "Sugar",
@@ -159,13 +182,19 @@ Request Body :
     "availableQuantity" : "30",
     "updateFlag" : "true"
 }
-Response : {
+```
+Response : 
+```json
+{
     "status": "success",
     "statusCode": 200,
     "statusMsg": "Grocery item updated successfully!"
 }
+```
 
 - iii. Update Stock Level (Modify Inventory Quantity)
+- Request Body:
+```json
 {
     "id" : 1,
     "name" : "Sugar",
@@ -173,13 +202,18 @@ Response : {
     "availableQuantity" : "20",
     "updateFlag" : "true"
 }
-Response :{
+```
+Response :
+```json
+{
     "status": "success",
     "statusCode": 200,
     "statusMsg": "Grocery item updated successfully!"
 }
+```
 
 **CuRL for addOrUpdateGroceryItem**
+```sh
 curl --location 'localhost:8099/gba/admin/addOrUpdateGroceryItem' \
 --header 'Content-Type: application/json' \
 --header 'Cookie: JSESSIONID=571A4D10B790C68A9631FA3876C488BE' \
@@ -190,11 +224,11 @@ curl --location 'localhost:8099/gba/admin/addOrUpdateGroceryItem' \
     "availableQuantity" : "50",
     "updateFlag" : "false"
 }'
-
+```
 
 3. Fetch All Groceries from the System (Admin Only)
-Endpoint : http://localhost:8099/gba/admin/fetchGroceries
-Description :
+- Endpoint : http://localhost:8099/gba/admin/fetchGroceries
+- Description :
 - This API allows the admin to fetch existing grocery items.
 - The admin can search for a grocery item by name.
 - If no name is specified, all grocery items will be returned with pagination (10 records per page).
@@ -202,12 +236,16 @@ Description :
 
 Example Request & Response (from Postman):
 - i. Fetch groceries by name
-Request body : {
+- Request body : 
+```json
+{
     "name" : "sugar",
     "pageNumber" : 0
 }
-
-Response: {
+```
+Response: 
+```json
+{
     "status": "Success",
     "statusCode": 200,
     "statusMsg": "Groceries fetched successfully",
@@ -223,13 +261,18 @@ Response: {
         }
     ]
 }
+```
 
 - ii. Fetch All Grocery Items (With Pagination & Sorting)
-Request body : {
+- Request body : \
+```json
+{
     "pageNumber" : 0
 }
-
-Response : {
+```
+Response : 
+```json
+{
     "status": "Success",
     "statusCode": 200,
     "statusMsg": "Groceries fetched successfully",
@@ -272,8 +315,10 @@ Response : {
         }
     ]
 }
+```
 
 **CuRL for fetchGroceries:**
+```sh
 curl --location 'localhost:8099/gba/admin/fetchGroceries' \
 --header 'Content-Type: application/json' \
 --header 'Cookie: JSESSIONID=571A4D10B790C68A9631FA3876C488BE' \
@@ -281,36 +326,43 @@ curl --location 'localhost:8099/gba/admin/fetchGroceries' \
     "name" : "sugar",
     "pageNumber" : 0
 }'
+```
 
 4. Remove Grocery Item from the System (Admin Only)
-Endpoint : http://localhost:8099/gba/admin/removeGroceryFromSystem
-description : This API soft deletes a grocery item by updating its status to "NotAvailable" instead of permanently deleting it.
-This ensures data consistency and allows for future recovery if needed.
+- Endpoint : http://localhost:8099/gba/admin/removeGroceryFromSystem
+- description : This API soft deletes a grocery item by updating its status to "NotAvailable" instead of permanently deleting it.
+- This ensures data consistency and allows for future recovery if needed.
 
 Example Request & Response (from Postman):
-Request body : {
+- Request body : 
+```json
+{
     "id" : 2
 }
-
-Response : {
+```
+Response : 
+```json
+{
     "status": "Success",
     "statusCode": 200,
     "statusMsg": "Grocery item removed successfully from system!"
 }
+```
 
 **CuRL for removeGroceryFromSystem**
+```sh
 curl --location 'localhost:8099/gba/admin/removeGroceryFromSystem' \
 --header 'Content-Type: application/json' \
 --header 'Cookie: JSESSIONID=571A4D10B790C68A9631FA3876C488BE' \
 --data '{
     "id" : 2
 }'
-
+```
 
 // USER APIs
 1. Fetch All Available Groceries from Inventory (For User)
-Endpoint : http://localhost:8099/gba/user/fetchAvailableGroceries
-description : API to fetch available groceries for users.
+- Endpoint : http://localhost:8099/gba/user/fetchAvailableGroceries
+- description : API to fetch available groceries for users.
 - Items marked as "Not Available" by the admin are excluded from the results.
 - Users can search by grocery name or fetch all available groceries.
 - Pagination (10 records per page) is implemented.
@@ -318,12 +370,16 @@ description : API to fetch available groceries for users.
 
 Example Request & Response (from Postman):
 - i. Fetch available groceries by name
-Request body : {
+- Request body : 
+```json
+{
     "name" : "Rice",
     "pageNumber" : 0
 }
-
-Response : {
+```
+Response : 
+```json
+{
     "status": "Success",
     "statusCode": 200,
     "statusMsg": "Available Groceries fetched successfully",
@@ -339,13 +395,18 @@ Response : {
         }
     ]
 }
+```
 
 - ii. Fetch All available Grocery Items (With Pagination & Sorting)
-Request body : {
+- Request body : 
+```json
+{
     "pageNumber" : 0
 }
-
-Response : {
+```
+Response : 
+```json
+{
     "status": "Success",
     "statusCode": 200,
     "statusMsg": "Available Groceries fetched successfully",
@@ -379,19 +440,21 @@ Response : {
         }
     ]
 }
+```
 
 **CuRL for fetchAvailableGroceries**
+```sh
 curl --location 'localhost:8099/gba/user/fetchAvailableGroceries' \
 --header 'Content-Type: application/json' \
 --data '{
     
     "pageNumber" : 0
 }'
-
+```
 
 2. Create (Book) Order for User Including Multiple Items
-Endpoint : http://localhost:8099/gba/user/createOrder
-description : This API allows users to place an order with multiple grocery items.
+- Endpoint : http://localhost:8099/gba/user/createOrder
+- description : This API allows users to place an order with multiple grocery items.
 - The system validates stock availability before placing the order.
 - If any item is out of stock or requested quantity exceeds stock, an error response is returned.
 - If all items are available, the order is placed successfully, and the requested quantity is deducted from inventory.
@@ -399,15 +462,19 @@ description : This API allows users to place an order with multiple grocery item
 
 Example Request & Response (from Postman):
 - i. Create (Book) Order - When Stock is Available
-Request body: {
+- Request body: 
+```json
+{
   "userId": 1,
   "items": [
     { "itemId": 1, "quantity": 5 },
     { "itemId": 3, "quantity": 1 }
   ]
 }
-
-Response : {
+```
+Response : 
+```json
+{
     "status": "success",
     "statusCode": 200,
     "statusMsg": "Order placed successfully!",
@@ -416,24 +483,30 @@ Response : {
         "status": "Pending"
     }
 }
-
+```
 - ii. Create (Book) Order - When Requested Quantity is Not Available
-Request body: {
+- Request body: 
+```json
+{
   "userId": 1,
   "items": [
     { "itemId": 1, "quantity": 51 },
     { "itemId": 3, "quantity": 1 }
   ]
 }
-
-Response: {
+```
+Response: 
+```json
+{
     "status": "failure",
     "statusCode": 400,
     "statusMsg": "Insufficient stock for item ID: 1",
     "result": null
 }
+```
 
 **CuRL for createOrder**
+```sh
 curl --location 'localhost:8099/gba/user/createOrder' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -443,23 +516,28 @@ curl --location 'localhost:8099/gba/user/createOrder' \
     { "itemId": 3, "quantity": 2 }
   ]
 }'
+```
 
 3. Fetch Order Details for User
-Endpoint : http://localhost:8099/gba/user/fetchOrderDetails
-description : This api retrieves the order detail for the specific user.
+- Endpoint : http://localhost:8099/gba/user/fetchOrderDetails
+- description : This api retrieves the order detail for the specific user.
 - If orderId is specified - Fetch details of that particular order.
 - If orderId is not specified - Fetch all orders of that user.
 - Pagination is implemented (10 orders per page, sorted from most recent).
 
 Example Request & Response (from Postman):
 - i. Fetch Specific Order Details (when orderId is specified)
-Request body: {
+- Request body: 
+```json
+{
     "userId" : 1,
     "orderId" : 1,
     "pageNumber" : 0
 }
-
-Response: {
+```
+Response: 
+```json
+{
     "status": "Success",
     "statusCode": 200,
     "statusMsg": "Fetched successfully",
@@ -486,14 +564,19 @@ Response: {
         }
     ]
 }
+```
 
 - ii. Fetch All Orders for User (Order History)
-Request body;{
+- Request body:
+```json
+{
     "userId" : 1,
     "pageNumber" : 0
 }
-
-Response: {
+```
+Response: 
+```json
+{
     "status": "Success",
     "statusCode": 200,
     "statusMsg": "Fetched successfully",
@@ -540,8 +623,10 @@ Response: {
         }
     ]
 }
+```
 
 **CuRL for fetchOrderDetails**
+```sh
 curl --location 'localhost:8099/gba/user/fetchOrderDetails' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -549,23 +634,28 @@ curl --location 'localhost:8099/gba/user/fetchOrderDetails' \
     
     "pageNumber" : 0
 }'
+```
 
 ## API to clear cache once every day
-Endpoint : GET http://localhost:8099/gba/cache/refreshCache
-description : This API is used to clear the cache once every day.
-- - you can manually call this api to clear all the caches when you need or internally a schedular is used to trigger this api once every 24 hr at 2 am to automatically clear the cache
+- Endpoint : GET http://localhost:8099/gba/cache/refreshCache
+- description : This API is used to clear the cache once every day.
+- you can manually call this api to clear all the caches when you need or internally a schedular is used to trigger this api once every 24 hr at 2 am to automatically clear the cache
 No request parameters are required.
 
 Example Request & Response (from Postman):
-Response: {
+- Response: 
+```json
+{
     "status": "Success",
     "statusCode": 200,
     "statusMsg": "Cache cleared successfully!"
 }
+```
 
 **CuRL for refreshCache**
+```sh
 curl --location 'localhost:8099/gba/cache/refreshCache'
-
+```
 
 # Contact
 - **For any queries, reach out at: patilprajyot008@gmail.com**
